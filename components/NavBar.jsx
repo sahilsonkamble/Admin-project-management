@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function NavBar() {
   return (
-    <div className="w-full h-14 bg-white text-black px-4 flex justify-between items-center shadow-sm">
+    <div className="w-full h-14 bg-white text-black px-4 flex justify-between items-center ">
       
       {/* Title */}
       <h1 className="font-bold text-xl">Project Management</h1>
