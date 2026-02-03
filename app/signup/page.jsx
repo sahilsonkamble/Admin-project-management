@@ -1,44 +1,57 @@
+// app/signup/page.jsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signup } from "../actions/signup"; // import the server action
+import { signIn } from "next-auth/react";
 
-export default function Signup() {
+export default function SignupPage() {
   const router = useRouter();
   const [error, setError] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function formAction(formData) {
+    setError("");
+    const res = await signup(formData);
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
-
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setError(data.error);
+    if (res?.error) {
+      setError(res.error);
       return;
     }
 
-    router.push("/signin");
+    // Option A: redirect to signin page
+    // router.push("/signin");
+
+    // Option B: auto-login after signup (calls next-auth on client)
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    // signIn returns a promise; redirect will happen to callbackUrl
+    await signIn("credentials", {
+      redirect: true,
+      email,
+      password,
+      callbackUrl: "/",
+    });
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Sign Up</h1>
+    <div style={{ maxWidth: 420, margin: "2rem auto" }}>
+      <h2>Create account</h2>
 
-      <input name="email" placeholder="Email" required />
-      <input name="password" type="password" placeholder="Password" required />
+      <form action={formAction}>
+        <label style={{ display: "block", marginTop: 8 }}>Email</label>
+        <input name="email" type="email" required />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        <label style={{ display: "block", marginTop: 8 }}>Password</label>
+        <input name="password" type="password" minLength={6} required />
 
-      <button type="submit">Create Account</button>
-    </form>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button type="submit" style={{ marginTop: 12 }}>
+          Sign up
+        </button>
+      </form>
+    </div>
   );
 }
