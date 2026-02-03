@@ -6,20 +6,15 @@ const project_list = [
   { id: 2, title: "Project 2" },
   { id: 3, title: "Project 3" },
   { id: 4, title: "Project 4" },
-  { id: 5, title: "Project 5" },
-  { id: 6, title: "Project 6" },
 ];
 
 export default function Projects() {
   const router = useRouter();
 
-  const handleClick = (project) => {
-    // Pass project title as a query parameter
-    router.push(`/project-page?title=${encodeURIComponent(project.title)}`);
-  };
+
 
   return (
-    <div className="flex flex-col bg-black p-3">
+    <div className="flex flex-col h-full  p-3">
 
       {/* Header */}
       <h1 className="text-zinc-300 font-bold text-2xl mb-4">
